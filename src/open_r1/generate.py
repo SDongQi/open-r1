@@ -12,6 +12,29 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+"""
+generate.py - 合成数据生成工具
+
+核心逻辑:
+1. 使用Distilabel框架构建高效的数据生成流水线
+2. 通过OpenAI兼容接口连接到vLLM服务器，支持大规模并行生成
+3. 主要流程:
+   - 从HuggingFace Hub加载源数据集
+   - 配置模型生成参数(温度、top_p、最大生成长度等)
+   - 根据提供的模板格式化提示文本
+   - 批量生成模型响应，支持每个输入生成多个候选回答
+   - 可选择将结果推送回HuggingFace Hub
+4. 关键功能:
+   - 支持自定义提示模板
+   - 配置化的生成参数
+   - 并行处理能力(通过client_replicas参数)
+   - 超时和重试机制，提高稳定性
+   - 批处理优化，提高吞吐量
+   
+此脚本是Open-R1数据生成流程的核心，主要用于从DeepSeek-R1等大型模型蒸馏高质量的训练数据，
+为后续的SFT和GRPO训练提供数据支持。典型应用包括生成数学推理轨迹和编程问题解答等。
+"""
+
 from typing import Optional
 
 from distilabel.llms import OpenAILLM
